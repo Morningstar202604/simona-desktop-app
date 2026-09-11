@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simona Mobile</string>
+    <string name="setup_title">Simona 初始化</string>
+    <string name="setup_desc">正在准备运行环境，请稍候...</string>
+    <string name="retry">重试</string>
+    <string name="loading">正在启动后端服务...</string>
+    <string name="accessibility_service_description">Simona 手机自动化控制服务。提供高速 UI 操作能力，包括点击、滑动、输入、导航和应用启动。</string>
+</resources>

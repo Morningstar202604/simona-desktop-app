@@ -1,0 +1,17 @@
+{
+  "name": "simona-mem",
+  "version": "12.4.7",
+  "description": "Persistent memory system for Simona Code - seamlessly preserve context across sessions",
+  "author": {
+    "name": "Alex Newman"
+  },
+  "repository": "https://github.com/thedotmack/simona-mem",
+  "license": "AGPL-3.0",
+  "keywords": [
+    "memory",
+    "context",
+    "persistence",
+    "hooks",
+    "mcp"
+  ]
+}

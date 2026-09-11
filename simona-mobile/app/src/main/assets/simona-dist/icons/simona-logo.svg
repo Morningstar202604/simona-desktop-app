@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- 主渐变：灰色系 -->
+    <linearGradient id="wingGradient" x1="-150%" y1="-100%" x2="150%" y2="100%">
+      <stop offset="0%" stop-color="#555555"/>
+      <stop offset="20%" stop-color="#888888"/>
+      <stop offset="40%" stop-color="#AAAAAA"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#AAAAAA"/>
+      <stop offset="80%" stop-color="#888888"/>
+      <stop offset="100%" stop-color="#555555"/>
+    </linearGradient>
+    
+    <!-- 外发光滤镜 -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- 内发光 -->
+    <filter id="innerGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="SourceGraphic"/>
+        <feMergeNode in="blur"/>
+      </feMerge>
+    </filter>
+    
+    <!-- 中心光晕 -->
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#888888" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#888888" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#888888" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- 外发光层 -->
+  <g filter="url(#innerGlow)">
+    <path d="M100,100 C74.5,56 40.5,50.5 15,78 C49,116.5 83,127.5 100,100" 
+          fill="none" stroke="#888888" stroke-width="20" stroke-opacity="0.2"/>
+    <path d="M100,100 C125.5,56 159.5,50.5 185,78 C151,116.5 117,127.5 100,100" 
+          fill="none" stroke="#888888" stroke-width="20" stroke-opacity="0.2"/>
+  </g>
+  
+  <!-- 主体渐变描边 -->
+  <g filter="url(#glow)">
+    <path d="M100,100 C74.5,56 40.5,50.5 15,78 C49,116.5 83,127.5 100,100" 
+          fill="none" stroke="url(#wingGradient)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M100,100 C125.5,56 159.5,50.5 185,78 C151,116.5 117,127.5 100,100" 
+          fill="none" stroke="url(#wingGradient)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- 内层高光 -->
+  <g stroke="#FFFFFF" stroke-opacity="0.5" fill="none" stroke-linecap="round">
+    <path d="M100,100 C74.5,56 40.5,50.5 15,78 C49,116.5 83,127.5 100,100" stroke-width="5.6"/>
+    <path d="M100,100 C125.5,56 159.5,50.5 185,78 C151,116.5 117,127.5 100,100" stroke-width="5.6"/>
+  </g>
+  
+  <!-- 核心亮线 -->
+  <g stroke="#FFFFFF" stroke-opacity="0.6" fill="none" stroke-linecap="round">
+    <path d="M100,100 C74.5,56 40.5,50.5 15,78 C49,116.5 83,127.5 100,100" stroke-width="2.5"/>
+    <path d="M100,100 C125.5,56 159.5,50.5 185,78 C151,116.5 117,127.5 100,100" stroke-width="2.5"/>
+  </g>
+  
+  <!-- 中心光点 -->
+  <circle cx="100" cy="100" r="4" fill="#FFFFFF" fill-opacity="0.6"/>
+  <circle cx="100" cy="100" r="2" fill="#FFFFFF"/>
+  
+  <!-- 流动粒子效果 -->
+  <g fill="#888888">
+    <circle cx="55" cy="65" r="1.5" fill-opacity="0.7">
+      <animate attributeName="cx" values="55;70;55" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0.7;0.2;0.7" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="70" cy="110" r="1" fill-opacity="0.5">
+      <animate attributeName="cy" values="110;95;110" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="145" cy="65" r="1.5" fill-opacity="0.7">
+      <animate attributeName="cx" values="145;130;145" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0.7;0.2;0.7" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="130" cy="110" r="1" fill-opacity="0.5">
+      <animate attributeName="cy" values="110;95;110" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="90" cy="90" r="0.8" fill-opacity="0.4">
+      <animate attributeName="fill-opacity" values="0.4;0.1;0.4" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="110" cy="90" r="0.8" fill-opacity="0.4">
+      <animate attributeName="fill-opacity" values="0.4;0.1;0.4" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- 呼吸动画 -->
+  <g>
+    <animateTransform attributeName="transform" type="scale" 
+                      values="1;1.02;1" dur="4s" repeatCount="indefinite"/>
+  </g>
+</svg>

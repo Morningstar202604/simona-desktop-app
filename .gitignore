@@ -1,0 +1,74 @@
+# === 大型依赖（可通过 npm/bun install 重建）===
+node_modules/
+engine/node_modules/
+
+# === 第三方运行时（不属于源码）===
+Chromium/
+git/
+python-3.13.2-embed-amd64/
+Inno Setup6.5.3汉化4GB版/
+
+# === 编译产物（可重新构建）===
+dist/
+release/
+simona-mobile/app/build/
+simona-mobile/.gradle/
+simona-mobile/local.properties
+temp-asar-extract/
+
+# === 运维脚本（不开源）===
+server-remote/
+
+# === 开发文件 ===
+.git/
+.github/
+.lingma/
+.claude/
+
+# === 临时文件 ===
+temp/
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+*.pre-*
+*~
+
+# === 敏感文件 ===
+secrets.json
+grok-video.json
+device-id.json
+api-keys/
+engine/.env
+*.env
+.env
+
+# === 用户数据 ===
+userData-*/
+dist-backup-*/
+
+# === 系统文件 ===
+.DS_Store
+Thumbs.db
+
+# === IDE ===
+.idea/
+.vscode/
+
+# === 二进制文件 ===
+*.exe
+*.dll
+*.bin
+*.rar
+*.pyc
+*.pyo
+
+# === 缓存/运行时数据 ===
+engine/.simona/
+
+# === 其他 ===
+work/
+TikTokDownloader-master/
+rustup-init.exe
+git-bundle/

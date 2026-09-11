@@ -1,0 +1,1369 @@
+SenseNova AI API 文档
+SenseNova 提供大模型 API 服务，覆盖文本对话、多模态理解、图像生成、工具调用与流式响应等能力。
+
+Base URL · 所有接口请求基于 https://token.sensenova.cn/v1（OpenAI SDK 设置 base_url 时使用此地址）
+
+快速开始
+使用 SenseNova API 只需 3 步：
+
+注册账号并完成手机号验证
+在 控制台 → API Keys 创建一枚 sk- 开头的密钥
+替换 OpenAI SDK 的 base_url 为 SenseNova 地址（https://token.sensenova.cn/v1），即可调用
+cURL
+Python
+Node.js
+复制
+curl https://token.sensenova.cn/v1/chat/completions \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sensenova-6.8-flash-lite",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'
+鉴权
+所有 API 请求必须在 HTTP Header 中携带 Bearer Token：
+
+复制
+Authorization: Bearer $SENSENOVA_API_KEY
+建议为不同应用/环境创建独立的 API Key，以便独立监控与轮换。密钥可在 控制台 随时注销。
+
+积分
+尊敬的 TokenPlan 用户：
+
+感谢大家一直以来对 SenseNova TokenPlan 的支持。随着越来越多用户使用 TokenPlan 处理日常工作，平台的日均 Token 消耗持续增长，也给部分模型在高峰时段的稳定使用带来了压力。
+
+我们理解，稳定、顺畅的模型体验对每一次任务都很重要。为了更合理地分配资源，让不同模型各展所长，TokenPlan 将于 2026 年 8 月 28 日启用新的积分规则，并同步开启 Flash-Lite 消费返赠活动。
+
+新的积分怎么使用
+积分规则上线后，您的账户内将展示两类积分：
+
+通用积分：所有已开放模型统一使用的积分。
+Flash-Lite 专属积分：仅用于 Flash-Lite 系列模型。
+使用 Flash-Lite 时，系统会优先扣除专属积分；专属积分不足后，再扣除通用积分。使用其他模型时，只扣除通用积分。
+
+公测期间，通用积分池和 Flash-Lite 专属积分池分别提供：
+
+60,000 积分的滚动 5 小时额度；
+600,000 积分的滚动周额度。
+当前有滚动 5 小时和周两层周期限制，不同模型会根据实际用量扣除不同积分，具体余额、用量和扣减记录可以在账户页面查看。
+
+Flash-Lite 消费返赠活动
+活动时间：2026 年 8 月 28 日起
+
+适用范围：活动期间拥有 Flash-Lite 专属积分的用户
+
+活动期间，每实际消耗 1 积分 Flash-Lite 专属积分，我们会返赠 1 通用积分。
+
+返赠按自然日汇总，按每小时结算到账。
+每笔返赠积分自到账之日起 30 天有效。
+返赠积分不占用滚动 5 小时额度和滚动周额度。
+返赠积分可以用于当前账号已有权限的模型，但不会自动解锁新的模型权限。
+例如，您当天实际消耗了 10,000 积分 Flash-Lite 专属积分，将获得 10,000 通用积分。实际返赠数量、到账时间和到期时间可以在积分明细中查看。
+
+常见问题
+Q：为什么使用 Flash-Lite 后没有立即收到返赠？
+
+A：返赠会按自然日汇总，按每小时结算到账。到账前不会计入可用余额，您可以在积分明细中查看返赠状态。
+
+Q：Flash-Lite 专属积分用完后还能继续使用吗？
+
+A：可以。只要账户中还有可用的通用积分，就可以继续使用 Flash-Lite；但从通用积分池扣除的这部分积分不参与返赠。
+
+Q：返赠的通用积分可以使用哪些模型？
+
+A：返赠积分可以用于当前账号已有权限、且已加入通用积分池的模型。获得积分不会自动开通新的模型权限。
+
+Q：返赠积分什么时候到期？
+
+A：每笔返赠积分自实际到账之日起 30 天有效，具体到期时间可以在积分明细中查看。
+
+当前额度和活动规则属于公测期权益。后续如有调整，我们会提前通知。我们也将陆续推出更多积分运营活动，帮助大家更灵活地组合使用高性价比的 Agent 模型和高性能开源模型。
+
+感谢您的理解与支持。如发现积分扣减或返赠异常，可通过 问题反馈 联系我们。
+
+模型总览
+模型名称	Model ID	描述
+SenseNova 6.8 Flash Lite	sensenova-6.8-flash-lite	轻量高效的多模态智能体模型，面向真实复杂任务，适配数据分析和复杂信息呈现场景
+SenseNova U1.5 Lite	sensenova-u1.5-lite	新一代图片创作模型，基于 Neo-unify 架构，生成与编辑一体，支持参考图功能及灵活修改
+SenseNova U1 Fast	sensenova-u1-fast	SenseNova U1 的加速版，基于 Neo-unify 架构，理解生成高效统一，信息图生成效果突出
+DeepSeek V4 Pro	deepseek-v4-pro	深度求索推出的旗舰通用模型，面向复杂 Agent 与高强度推理任务，强化代码修改、工具调用与多步骤任务执行能力，支持 1M 上下文及思考/非思考模式
+版本说明：DeepSeek V4 Pro 0813 正式版
+DeepSeek V4 Flash	deepseek-v4-flash	深度求索推出的高效经济型通用模型，在平衡推理与 Agent 能力的同时，速度更快、效率更优，适合日常问答、代码辅助及规模化 Agent 应用
+版本说明：DeepSeek V4 Flash 0731 正式版
+GLM-5.2	glm-5.2	智谱推出的旗舰开源模型，面向长程 Coding 与复杂工程任务，支持 1M 上下文及思考/非思考模式，擅长大型复杂代码开发、长程规划、工具协同与科研复现
+Kimi K3	kimi-k3	月之暗面推出的旗舰开源原生多模态 Agent 模型，拥有 2.8T 参数、原生视觉能力与 1M 上下文，面向长程编程、知识工作及复杂推理等任务
+SenseNova 6.8 Flash Lite
+日日新轻量高效的多模态智能体模型，面向真实复杂任务，适配数据分析和复杂信息呈现场景
+
+重点提升多模态 Agent 场景能力，更加高效且稳定执行端到端任务
+复杂数据分析能力显著增强，能够高效执行规划、推理、工具调用与结果验证
+通过主/次 Agent 协作并结合原生多模态能力，实现准确、美观、可编辑的演示交付物
+注：从即日起至8月31日，系统已开启兼容路由。使用 sensenova-6.7-flash-lite 调用接口时，请求将自动重定向至 sensenova-6.8-flash-lite 。
+
+model ID: sensenova-6.8-flash-lite
+
+请求地址
+复制
+POST https://token.sensenova.cn/v1/chat/completions
+纯文本对话
+cURL
+Python
+Node.js
+复制
+curl https://token.sensenova.cn/v1/chat/completions \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sensenova-6.8-flash-lite",
+    "messages": [
+      { "role": "system", "content": "你是一个有用的助手。" },
+      { "role": "user",   "content": "介绍一下商汤科技。" }
+    ],
+    "stream": false
+  }'
+图像输入（多模态理解）
+SenseNova 6.8 Flash Lite 支持通过 image_url 类型的 content 块传入图片进行内容理解与分析。
+
+请求示例
+复制
+curl  https://token.sensenova.cn/v1/chat/completions \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sensenova-6.8-flash-lite",
+    "messages": [
+      {
+        "content": "你是一个说话客观公正的小助手",
+        "role": "system"
+      },
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "图片里面有什么"
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "https://www.sensenova.cn/images/logo.png"
+            }
+          }
+        ]
+      }
+    ],
+    "n": 1,
+    "stream": false,
+    "max_tokens": 1000,
+    "reasoning_effort": "none"
+  }'
+用户消息的 content 可以是字符串，也可以是内容块数组。图像输入使用 image_url 类型：
+
+复制
+{
+  "type": "image_url",
+  "image_url": {
+    "url": "https://www.sensenova.cn/images/logo.png"
+  }
+}
+工具调用 (Function Calling)
+通过 tools 字段声明可用函数，模型会在需要时以 tool_calls 的形式返回调用请求。工具执行后，以 role="tool" 的消息把结果回传，再次请求即可获得最终答复。
+
+请求示例
+复制
+{
+  "model": "sensenova-6.8-flash-lite",
+  "messages": [{ "role": "user", "content": "今天上海天气怎么样？" }],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "Get current weather of a city",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "city": { "type": "string" }
+          },
+          "required": ["city"]
+        }
+      }
+    }
+  ],
+  "tool_choice": "auto"
+}
+模型返回 tool_calls
+复制
+{
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "index": 0,
+            "id": "call_abc123",
+            "type": "function",
+            "function": {
+              "name": "get_weather",
+              "arguments": "{\"city\": \"上海\"}"
+            }
+          }
+        ]
+      },
+      "finish_reason": "tool_calls"
+    }
+  ]
+}
+回传工具结果
+复制
+{
+  "model": "sensenova-6.8-flash-lite",
+  "messages": [
+    { "role": "user", "content": "今天上海天气怎么样？" },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        /* 上一步模型返回 */
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_abc123",
+      "content": "{\"temp\": 22, \"desc\": \"多云\"}"
+    }
+  ]
+}
+流式响应 (SSE)
+设置 stream: true 后，响应 Content-Type 为 text/event-stream，每行以 data: {json} 推送一个 chunk，最后以 data: [DONE] 结束。
+
+复制
+data: {"id":"chatcmpl-...","object":"chat.completion.chunk","created":1713167890,"model":"sensenova-6.8-flash-lite","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-...","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"Hello"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-...","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"! How can I help?"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-...","object":"chat.completion.chunk","choices":[{"index":0,"delta":{},"finish_reason":"stop"}],"usage":{"prompt_tokens":12,"completion_tokens":8,"total_tokens":20}}
+
+data: [DONE]
+usage 仅在 stream_options.include_usage=true 时在最后一个 chunk 中返回。
+
+请求参数
+字段	类型	必填	默认值	说明
+model	string	✅	—	固定为 sensenova-6.8-flash-lite
+messages	array	✅	—	对话消息列表，role ∈ {system, user, assistant, tool}；content 可为字符串或内容块数组（图像输入时使用）
+stream	boolean	—	false	是否以 SSE 流式返回
+stream_options	object	—	{"include_usage": True}	仅 stream=true 生效。含 include_usage (boolean)
+temperature	float	—	0.6	采样温度，建议 [0, 2]
+top_p	float	—	0.95	核采样，范围 （0, 1]
+max_tokens	integer	—	65535	最大生成 token 数，范围 [1, 65536]
+n	integer	—	1	生成回复数量，范围 1–7
+stop	string | array	—	—	停止序列
+frequency_penalty	float	—	0	频率惩罚，[0,2]
+presence_penalty	float	—	0	存在惩罚，[0,2]
+reasoning_effort	string	—	"medium"	推理力度，可选值"low"/"medium"/"high"/"none"
+tools	array	—	—	可用工具列表
+tool_choice	string | object	—	"auto"	工具选择策略："auto" / "none" / "required" 或指定工具
+parallel_tool_calls	boolean	—	true	是否允许并行调用多个工具
+seed	integer	—	—	随机种子（Beta），范围[0,9999999]
+响应结构
+复制
+{
+  "id": "chatcmpl-8aBcD...",
+  "object": "chat.completion",
+  "created": 1713167890,
+  "model": "sensenova-6.8-flash-lite",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "商汤科技是一家领先的人工智能公司..."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 12,
+    "completion_tokens": 8,
+    "total_tokens": 20,
+    "prompt_tokens_details": { "cached_tokens": 0 }
+  }
+}
+finish_reason 枚举
+value	含义
+stop	正常结束
+length	达到 max_tokens 或上下文上限
+tool_calls	模型选择调用工具
+content_filter	内容被合规审核拦截
+SenseNova U1.5 Lite
+日日新最新一代图片创作模型，基于 Neo-unify 架构，生成与编辑一体，支持参考图功能及灵活修改
+
+统一图像理解、生成与编辑链路，支持图片从创作到修改的完整流程
+强化参考图创作与整体视觉表现，提升构图、光影、材质与细节的呈现
+增强复杂指令遵循与多重约束执行能力，大幅提升复杂图文创作的准确与效果
+model ID: sensenova-u1.5-lite
+
+接口说明
+支持两个独立图片接口：
+
+/v1/images/generations：文生图接口，仅输入文本 prompt 生成图片
+/v1/images/edits：图片编辑接口，输入参考图片 + 编辑提示词，完成图生图 / 图片改写
+文生图接口
+⚠️ 使用独立的图像生成接口，不是 Chat Completions 接口。不支持图像输入。
+
+⚠️ 接口返回的图片 URL 为临时访问链接，固定有效期 24 小时，超时后链接直接失效，无法再次访问图片。
+
+⚠️ 无水印生成（watermark=false）当前免费公测，后续将转为付费功能。为避免未来默认值变更影响线上业务，建议调用时显式传入 watermark 参数。
+
+请求地址
+复制
+POST https://token.sensenova.cn/v1/images/generations
+cURL 示例
+复制
+curl https://token.sensenova.cn/v1/images/generations \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sensenova-u1.5-lite",
+    "prompt": "一只海獭宝宝漂浮在平静海面上，柔和晨光，写实摄影风格",
+    "n": 1,
+    "size": "1024x1024",
+    "output_format": "png",
+    "response_format": "b64_json",
+    "watermark": true
+  }'
+# watermark=false：公测期间免费开放去水印
+请求参数
+字段	类型	必填	默认值	说明
+model	string	✅	—	sensenova-u1.5-lite
+prompt	string	✅	—	图像描述文本
+size	string	—	auto	图像尺寸，支持 2K / 4K 分辨率常量；
+WIDTH 和 HEIGHT 需要是 32 的倍数，最小值 512，最大值 4096，最大比例 3:1 或 1:3。
+建议分辨率：
+2048x2048 ｜ 1:1 ｜ 2K
+2720x1536 ｜ 16:9 ｜ 2K
+1536x2720 ｜ 9:16 ｜ 2K
+1664x2496 ｜ 2:3 ｜ 2K
+2496x1664 ｜ 3:2 ｜ 2K
+4096x4096 ｜ 1:1 ｜ 4K
+n	integer	—	1	生成图片数量，仅支持值为 1
+watermark	boolean	—	true	是否添加日日新 SenseNova 官方 Logo 水印。
+true：添加水印
+false：生成无水印纯图（Beta 免费，公测结束后作为高级付费特性提供）
+output_format	string	—	png	可选 png、jpeg、webp
+控制图片文件格式；PNG 适合透明背景和无损画面；JPEG 适合照片类图片且不支持透明背景；WEBP 兼顾文件大小和透明背景；该字段不控制结果以 Base64 还是 URL 返回
+response_format	string	—	b64_json	可选 b64_json、url
+控制结果的承载方式，不控制图片文件格式；b64_json 返回图片 Base64 内容；url 返回有效期为 24 小时的临时下载地址；同一次请求中的所有最终图片使用相同返回方式；data[].b64_json 与 data[].url 不同时返回
+prompt_extend	boolean	—	true	提示词自动润色优化开关，扩写失败时自动使用原始 prompt。
+true：开启提示词自动润色优化
+false：关闭扩写
+响应结构
+复制
+{
+  "created": 1713167890,
+  "data": [
+    {
+      "url": "https://cdn.sensenova.dev/gen/..."
+    }
+  ]
+}
+图片编辑接口
+支持图片编辑接口；该接口必须传入输入图片，不能仅传 prompt；为同步接口。
+
+⚠️ 此接口返回的 response_format=url 链接有效期为 24 小时
+
+⚠️ 图片输入支持：公网 HTTP/HTTPS URL、Base64 Data-URL（data:image/png;base64,xxxx）；不支持纯无前缀 Base64 字符串
+
+请求地址
+复制
+POST https://token.sensenova.cn/v1/images/edits
+请求示例
+使用公网图片 URL 输入
+
+复制
+{
+  "model": "sensenova-u1.5-lite",
+  "images": [
+    {
+      "image_url": "https://example.com/source.png"
+    }
+  ],
+  "prompt": "把背景改成雪山，人物保持不变",
+  "watermark": true,
+  "prompt_extend": true,
+  "size": "auto",
+  "response_format": "url"
+}
+使用 Base64 Data-URL 输入
+
+复制
+{
+  "model": "sensenova-u1.5-lite",
+  "images": [
+    {
+      "image_url": "data:image/png;base64,iVBORw0KGgoAAA..."
+    }
+  ],
+  "prompt": "将背景替换为纯白色",
+  "watermark": true
+}
+cURL 示例
+
+复制
+curl https://token.sensenova.cn/v1/images/edits \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sensenova-u1.5-lite",
+    "images": [{"image_url":"https://example.com/source.png"}],
+    "prompt": "把背景改成雪山，人物保持不变",
+    "n": 1,
+    "size": "2048x2048",
+    "watermark": true,
+    "prompt_extend": true,
+    "response_format": "b64_json"
+  }'
+请求参数
+字段	类型	必填	默认值	说明
+model	string	✅	—	sensenova-u1.5-lite
+images	array	✅	—	图片对象数组，每项包含 image_url；第一张为主编辑图
+images[].image_url	string	✅	—	完整公网 URL 或 Base64 Data；仅支持公网 http 或 https 链接或带 data:image/*;base64, 前缀的 Base64。可直接访问；纯无前缀 Base64 不支持。链接访问失败、不是图片、Base64 解码错误将直接驳回请求。
+prompt	string	✅	—	编辑指令，描述期望最终画面；去除首尾空格后不可为空；尽量保留未指定修改的主体元素
+n	integer	—	1	仅支持值为 1
+size	string	—	auto	图像尺寸，2K /4K 分辨率常量；
+WIDTH 和 HEIGHT ，需要是32的倍数，最小值512，最大值4096，最大比例 3:1 或者 1:3； auto 自动适配主图；
+建议分辨率：
+2048 x 2048 ｜ 1:1 ｜ 2K
+2720 x 1536 ｜ 16:9 ｜ 2K
+1536 x 2720 ｜ 9:16 ｜ 2K
+1664 x 2496 ｜ 2:3 ｜ 2K
+2496 x 1664 ｜ 3:2 ｜ 2K
+4096 x 4096 ｜ 1:1 ｜ 4K
+response_format	string	—	b64_json	b64_json 返回 Base64；url 返回 24 小时有效期的临时链接；同一请求中的全部图片返回同一种格式
+watermark	boolean	—	true	是否添加日日新 SenseNova 官方 Logo 水印。
+true：添加水印
+false：生成无水印纯图（Beta 免费，公测结束后作为高级付费特性提供）
+prompt_extend	boolean	—	true	提示词自动润色优化开关，扩写失败时自动使用原始 prompt。
+true：开启提示词自动润色优化
+false：关闭扩写
+SenseNova U1 Fast
+SenseNova U1 的加速版，基于 Neo-unify 架构，理解生成高效统一，信息图生成效果突出
+
+打通图文理解、生成与编辑链路，实现修改准确性和画面稳定性
+增强密集文字和复杂内容的精准识别与定向编辑
+支持全局风格与版式布局调整，提升图文一致性
+model ID: sensenova-u1-fast
+
+⚠️ U1 Fast 使用独立的图像生成接口，不是 Chat Completions 接口。不支持图像输入。
+
+⚠️ 接口返回的图片 URL 为临时访问链接，固定有效期 1 小时，超时后链接直接失效，无法再次访问图片。
+
+⚠️ 无水印生成（watermark=false）当前免费公测，后续将转为付费功能。为避免未来默认值变更影响线上业务，建议调用时显式传入 watermark 参数。
+
+请求地址
+复制
+POST https://token.sensenova.cn/v1/images/generations
+cURL
+Python
+Node.js
+复制
+curl https://token.sensenova.cn/v1/images/generations \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sensenova-u1-fast",
+    "prompt": "这张信息图以柔和的粉色、淡黄色和浅蓝色为主色调，采用了极具亲和力的可爱卡通风格（包含猫咪、拟人化表情等元素）。整体排版从左到右分为三个主要区块，分别介绍核心能力、工作流程和重要规则。图表的左上角是醒目的主标题“信息图生成专家”，其下方紧跟副标题：“帮助用户将复杂信息转化为清晰易懂的视觉呈现”。以下是图表中各区块的详细结构和全部文字内容：1. 左侧区块：核心能力与专家提示。该区块主要列出了三项核心能力，并附带了一条专家提示。核心能力（由上至下排列，每项均配有可爱的拟人化图标）：1. 联网搜索功能：查询最新网络信息（图标为一个带有猫耳、拿着放大镜的拟人化地球）。2. 网页内容读取功能：获取指定网页的详细内容（图标为一个戴着眼镜、正在阅读的拟人化纸卷）。3. 信息图生成功能：根据文字描述生成专业的信息图（图标为一个手持柱状图的可爱机器人）。专家提示（位于该区块底部，背景为黄色便利贴样式，右上角有一只探出纸箱的猫咪图标）：文本内容：“熟练结合搜索与读取工具，最大化提升视觉数据的信息密度。”2. 中间区块：严格工作流程。该区块通过一条带有节点的垂直轴线，串联起三个工作步骤，每个步骤放置在圆角标签中：步骤一：分析需求（图标为粉色的大脑与一个带有笑脸的彩色齿轮）。步骤二：收集信息（图标为一个拟人化的漏斗，正在过滤星星和圆点）。步骤三：生成图片（图标为带有猫爪印的调色板、画笔以及一个饼状图）。3. 右侧区块：重要规则与核心目标。该区块被设计成一个带有红白相间遮阳篷的备忘录面板。重要规则（包含四条规则，每条规则左侧配有图标）：规则一：每次请求都是全新任务（图标为一个猫咪造型的甜甜圈）。规则二：优先使用辅助工具收集信息（图标为一个带有星星装饰的可爱手提包）。规则三：保留用户原始数据（图标为一个带有花朵旋钮的拟人化保险箱）。规则四：使用用户语言生成内容（图标为一块玉石质感的云纹装饰和一支铅笔）。核心目标（位于该区块底部，背景为淡紫色，右侧配有一个礼物盒图标）：文本内容：“消除混乱，重构逻辑，实现高维维度视觉数据合成。”",
+    "size": "2752x1536",
+    "n": 1,
+    "watermark": true
+  }'
+  # watermark=false：公测期间免费开放去水印
+请求参数
+字段	类型	必填	默认值	说明
+model	string	✅	—	固定为 sensenova-u1-fast
+prompt	string	✅	—	图像描述文本，最大token数为4096
+size	string	—	"2752x1536"	图像尺寸，2K 分辨率常量 - 11种 aspect ratio 对应的 [width, height]
+1664x2496 ｜ 2:3
+2496x1664 ｜ 3:2
+1760x2368 ｜ 3:4
+2368x1760 ｜ 4:3
+1824x2272 ｜ 4:5
+2272x1824 ｜ 5:4
+2048x2048 ｜ 1:1
+2752x1536 ｜ 16:9
+1536x2752 ｜ 9:16
+3072x1376 ｜ 21:9
+1344x3136 ｜ 9:21
+n	integer	—	1	生成图片数量
+watermark	boolean	—	true	是否添加日日新 SenseNova 官方 Logo 水印。
+true：添加水印
+false：生成无水印纯图（Beta 免费，公测结束后作为高级付费特性提供）
+响应结构
+复制
+{
+  "created": 1713167890,
+  "data": [
+    {
+      "url": "https://cdn.sensenova.dev/gen/..."
+    }
+  ]
+}
+DeepSeek V4 Pro
+深度求索旗舰通用模型，面向复杂推理、专业知识与高难度 Agent 任务
+
+具备较强的推理、代码与知识处理能力，适合深度分析、复杂问题求解及专业任务
+支持代码修改、工具调用与多步骤执行，用于复杂 Coding Agent 和自动化工作流
+支持 1M Token 上下文及思考 / 非思考模式，可按任务复杂度选择不同思考强度
+版本说明：DeepSeek V4 Pro 0813 正式版
+
+model ID: deepseek-v4-pro
+
+请求地址
+复制
+POST https://token.sensenova.cn/v1/chat/completions
+cURL 示例
+复制
+curl https://token.sensenova.cn/v1/chat/completions \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-v4-pro",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant."},
+      {"role": "user", "content": "你好"}
+    ],
+    "stream": false
+  }'
+思考模式与推理强度
+DeepSeek-V4-Pro 思考模式可开启/关闭：通过顶层对象 thinking.type 控制（enabled/disabled），默认 enabled。
+
+推理深度用顶层 reasoning_effort 调节，可选 low / high / max；兼容值 medium、xhigh 会映射为 high。
+
+cURL
+复制
+curl https://token.sensenova.cn/v1/chat/completions \
+-H "Authorization: Bearer {your_key}" \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "deepseek-v4-pro",
+    "messages": [{"role": "user", "content": "分析分布式系统CAP理论的核心矛盾，结合实际业务场景给出落地取舍方案"}],
+    "thinking":{"type":"enabled"},
+    "thinking_effort": "max",
+    "stream": false
+}'
+工具调用
+支持标准 OpenAI 格式函数调用能力，可自定义工具、自动触发调用、并行多工具执行，适配智能体工作流、外部数据查询、任务编排场景。通过 tools 字段声明工具，模型按需返回 tool_calls，回传工具结果后可获取最终推理答复。
+
+多轮工具调用时：必须原样回传完整的 assistant 消息对象，不可只保留 content 字段，带上 thinking_content、tool_calls。
+
+请求示例
+复制
+{
+    "model": "deepseek-v4-pro",
+    "thinking":{"type":"enabled"},
+    "messages": [{"role": "user", "content": "查询今日北京实时天气与空气质量"}],
+    "tools": [{
+        "type": "function",
+        "function": {
+            "name": "get_city_weather",
+            "description": "获取指定城市实时天气、温度、空气质量数据",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "city": {"type": "string", "description": "城市名称"}
+                },
+                "required": ["city"]
+            }
+        }
+    }],
+    "tool_choice": "auto",
+    "parallel_tool_calls": true
+}
+模型返回 tool_calls 示例
+复制
+{
+    "choices": [{
+        "index": 0,
+        "message": {
+            "role": "assistant",
+            "content": null,
+            "thinking_content": "此处为模型内部思考推理过程……",
+            "tool_calls": [{
+                "index": 0,
+                "id": "call_zp52001",
+                "type": "function",
+                "function": {
+                    "name": "get_city_weather",
+                    "arguments": "{\"city\":\"北京\"}"
+                }
+            }]
+        },
+        "finish_reason": "tool_calls"
+    }]
+}
+工具结果回传示例
+复制
+{
+    "model": "deepseek-v4-pro",
+    "messages": [
+        {"role": "user", "content": "查询今日北京实时天气与空气质量"},
+        {"role": "assistant", "thinking_content":"...","tool_calls": [/*上游返回完整tool_calls对象*/]},
+        {
+            "role": "tool",
+            "tool_call_id": "call_zp52001",
+            "content": "{\"temp\":26,\"weather\":\"晴\",\"aqi\":35,\"wind\":\"南风3级\"}"
+        }
+    ]
+}
+流式响应 (SSE)
+设置 stream: true 开启流式返回，响应 Content-Type 为 text/event-stream。
+
+流式增量： 思考过程字段为 delta.thinking_content，最终回答为 delta.content；末尾以 data: [DONE] 标识请求结束。建议开启 stream_options:{"include_usage":true} 获取流式 token 统计。
+
+请求参数
+字段	类型	必填	默认值	说明
+model	string	✅	—	固定为 deepseek-v4-pro
+messages	array	✅	—	对话消息列表，role 支持 system/user/assistant/tool
+n	integer	—	1	仅支持 n=1
+response_format	object	—	—	支持 text、json_object 格式输出
+stream	boolean	—	false	是否开启 SSE 流式响应
+stream_options	object	—	{"include_usage":true}	仅 stream=true 生效；为 true 时，sse 流式末尾 chunk 中返回 usage
+temperature	number	—	1.0	采样温度，取值 [0,2]；超出范围报错
+top_p	number	—	0.95	核采样概率，取值 (0,1]；超出范围报错
+max_tokens	integer	—	65536	单次最大生成 token，取值 [1,393216]
+stop	string | array	—	—	自定义停止生成序列；最多 4 个字符串
+thinking	object	—	{"type":"enabled"}	思考模式配置对象。type 枚举：enabled/disabled/adaptive；禁止传布尔值
+thinking.clear_thinking	boolean	—	false	是否清空思考缓存；仅 type 不为 disabled 时生效。
+嵌套于 thinking 对象内；true = 清空思考缓存；false = 保留；非布尔值返回 400 报错
+frequency_penalty	number	—	0	频率惩罚，取值 [0,2]
+presence_penalty	number	—	0	存在惩罚，取值 [0,2]
+seed	integer	—	—	随机种子，输出复现（Beta）；取值 [0,9999999)
+tools	array	—	—	工具函数列表，函数调用场景使用
+reasoning_effort	string	—	high	推理力度，合法：low/medium/high/xhigh/max/none
+tool_choice	string | object	—	auto	工具调用策略：auto/none/required/指定 function 对象
+logprobs	boolean	—	false	是否返回 log 概率
+top_logprobs	integer	—	—	logprobs=true 生效，取值 0-20，非法值报错
+响应结构
+复制
+{
+    "id": "chatcmpl-zp52890abc",
+    "object": "chat.completion",
+    "created": 1782456990,
+    "model": "deepseek-v4-pro",
+    "choices": [{
+        "index": 0,
+        "message": {
+            "role": "assistant",
+            "thinking_content": "用户询问CAP理论核心矛盾，首先明确CAP三者定义，再梳理分布式系统分区容错必要性，推导无法同时满足的核心逻辑...",
+            "content": "CAP理论是分布式系统的核心理论，核心结论为：一致性（Consistency）、可用性（Availability）、分区容错性（Partition tolerance）三者无法同时满足。在分布式集群中，网络分区不可避免，因此必须在一致性和可用性之间做取舍..."
+        },
+        "finish_reason": "stop"
+    }],
+    "usage": {
+        "prompt_tokens": 156,
+        "completion_tokens": 328,
+        "total_tokens": 484,
+        "prompt_tokens_details": {"cached_tokens": 0},
+        "completion_tokens_details": {"thinking_tokens": 189}
+    }
+}
+finish_reason 枚举说明
+value	含义
+stop	模型正常生成结束，无异常截断
+length	达到 max_tokens 或上下文上限
+tool_calls	模型触发工具调用，等待回传工具执行结果
+content_filter	内容触发合规审核规则，被拦截终止
+DeepSeek V4 Flash
+深度求索高效经济型通用模型，适合日常任务、代码辅助及高频 Agent 应用
+
+具备推理、代码处理与工具调用能力，可覆盖问答、内容处理及常规 Agent 任务
+模型更轻量，兼顾响应速度与调用成本，适合高频调用及规模化业务场景
+支持 1M Token 上下文及思考 / 非思考模式，可根据任务需求灵活调整思考强度
+版本说明：DeepSeek V4 Flash 0731 正式版
+
+model ID: deepseek-v4-flash
+
+请求地址
+复制
+POST https://token.sensenova.cn/v1/chat/completions
+纯文本对话
+cURL
+Python
+Node.js
+复制
+curl https://token.sensenova.cn/v1/chat/completions \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-v4-flash",
+    "messages": [
+      { "role": "system", "content": "You are a helpful assistant." },
+      { "role": "user",   "content": "Hello!" }
+    ],
+    "stream": false
+  }'
+思考模式
+DeepSeek V4 Flash 默认启用思考模式。通过 reasoning_effort 参数控制：
+
+复制
+{
+  "model": "deepseek-v4-flash",
+  "messages": [
+    { "role": "user", "content": "9.11 和 9.8 哪个更大？" }
+  ],
+  "reasoning_effort": "high"
+}
+reasoning_effort: "low" / "medium" / "high" / "none"，默认 "medium"
+设为 "none" 关闭思考模式，设为 "high" 适合需要深度推理的复杂任务
+思考模式下，响应的 message 中会额外包含 reasoning_content 字段，为模型的推理过程。
+
+工具调用 (Function Calling)
+复制
+{
+  "model": "deepseek-v4-flash",
+  "messages": [{ "role": "user", "content": "杭州今天天气怎么样？" }],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "获取指定城市的当前天气",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "city": { "type": "string" }
+          },
+          "required": ["city"]
+        }
+      }
+    }
+  ],
+  "tool_choice": "auto"
+}
+JSON 输出
+设置 response_format 启用 JSON 模式（需在 prompt 中指示模型输出 JSON）：
+
+复制
+{
+  "model": "deepseek-v4-flash",
+  "messages": [
+    { "role": "system", "content": "请以 JSON 格式回答。" },
+    { "role": "user", "content": "列出三种编程语言及其特点。" }
+  ],
+  "response_format": { "type": "json_object" }
+}
+流式响应 (SSE)
+设置 stream: true 后，响应以 text/event-stream 形式推送，最后以 data: [DONE] 结束。
+
+请求参数
+字段	类型	必填	默认值	说明
+model	string	✅	—	固定为 deepseek-v4-flash
+messages	array	✅	—	对话消息列表，role ∈ {system, user, assistant, tool}
+reasoning_effort	string	—	"medium"	推理力度，可选值 "low" / "medium" / "high" / "none"
+stream	boolean	—	false	是否以 SSE 流式返回
+stream_options	object	—	—	仅 stream=true 生效。含 include_usage (boolean)
+temperature	float	—	1	采样温度，范围 [0, 2]
+top_p	float	—	1	核采样，范围 [0, 1]
+max_tokens	integer	—	65536	最大生成 token 数
+stop	string	array	—	—
+frequency_penalty	float	—	0	频率惩罚，[-2, 2]
+presence_penalty	float	—	0	存在惩罚，[-2, 2]
+response_format	object	—	—	{"type": "json_object"} 启用 JSON 输出模式
+tools	array	—	—	可用工具列表
+tool_choice	string | object	—	"auto"	工具选择策略："none" / "auto" / "required" 或指定工具
+响应结构
+复制
+{
+  "id": "chatcmpl-xxx",
+  "object": "chat.completion",
+  "created": 1714300000,
+  "model": "deepseek-v4-flash",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hello! How can I help you today?",
+        "reasoning_content": "用户打了招呼，我应该友好地回应..."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 277,
+    "completion_tokens": 18,
+    "total_tokens": 295,
+    "prompt_tokens_details": {
+      "cached_tokens": 256,
+      "audio_tokens": 0
+    }
+  }
+}
+finish_reason 枚举
+value	含义
+stop	正常结束
+length	达到 max_tokens 或上下文上限
+tool_calls	模型选择调用工具
+content_filter	内容被合规审核拦截
+GLM-5.2
+智谱面向长程任务的开源模型，专注复杂软件工程与多步骤 Agent 任务
+
+支持大型代码库开发、复杂调试与多文件修改，适合中大型软件工程任务
+具备长程规划与工具协同能力，可持续推进开发、性能优化及自动化研究等复杂任务
+支持稳定的 1M Token 上下文及多档思考强度，适合多步骤的任务执行
+model ID: glm-5.2
+
+请求地址
+复制
+POST https://token.sensenova.cn/v1/chat/completions
+纯文本对话
+cURL
+Python
+Node.js
+复制
+curl https://token.sensenova.cn/v1/chat/completions \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "glm-5.2",
+    "messages": [
+      { "role": "system", "content": "你是资深全栈开发工程师，擅长复杂代码编写与问题排查" },
+      { "role": "user", "content": "用 Go 语言实现高并发快速排序算法，附带详细注释" }
+    ],
+    "stream": false
+  }'
+深度思考模式
+GLM-5.2 原生支持深度推理能力，可自由开关思考模式、调节推理强度，适配简单问答、复杂推理等不同场景。
+
+复制
+{
+  "model": "glm-5.2",
+  "messages": [
+    { "role": "user", "content": "9.11 和 9.8 哪个更大？" }
+  ],
+  "reasoning_effort": "high"
+}
+reasoning_effort: "low" / "medium" / "high" / "none"，默认 "medium"
+设为 "none" 关闭思考模式，设为 "high" 适合需要深度推理的复杂任务
+思考模式下，响应的 message 中会额外包含 reasoning_content 字段，为模型的推理过程。
+
+工具调用 (Function Calling)
+复制
+{
+  "model": "glm-5.2",
+  "messages": [{ "role": "user", "content": "杭州今天天气怎么样？" }],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "获取指定城市的当前天气",
+        "parameters": {
+          "type": "object",
+          "properties": { "city": { "type": "string" } },
+          "required": ["city"]
+        }
+      }
+    }
+  ],
+  "tool_choice": "auto"
+}
+JSON 输出
+设置 response_format 启用 JSON 模式（需在 prompt 中指示模型输出 JSON）：
+
+复制
+{        // 创建聊天完成请求
+        ChatCompletionCreateParams request = ChatCompletionCreateParams.builder()
+            .model("glm-5.2")
+            .messages(Arrays.asList(
+                ChatMessage.builder()
+                    .role(ChatMessageRole.USER.value())
+                    .content("Hello, who are you?")
+                    .build()
+            ))
+            .stream(false)
+            .temperature(0.6f)
+            .maxTokens(1024)
+            .build();
+
+        // 发送请求
+        ChatCompletionResponse response = client.chat().createChatCompletion(request);
+
+        // 获取回复
+        System.out.println(response.getData().getChoices().get(0).getMessage());
+}
+流式响应 (SSE)
+设置 stream: true 开启流式返回，响应 Content-Type 为 text/event-stream，逐段推送回答内容，末尾以 data: [DONE] 标识请求结束。
+
+请求参数
+字段	类型	必填	默认值	说明
+model	string	✅	—	固定为 glm-5.2
+messages	array	✅	—	对话消息列表，role ∈ {system, user, assistant, tool}
+reasoning_effort	string	—	"medium"	推理力度，可选值 "low" / "medium" / "high" / "none"
+stream	boolean	—	false	是否以 SSE 流式返回
+stream_options	object	—	—	仅 stream=true 生效。含 include_usage (boolean)
+temperature	float	—	1	采样温度，范围 [0, 2]
+top_p	float	—	1	核采样，范围 [0, 1]
+max_tokens	integer	—	65536	最大生成 token 数
+stop	string	array	—	—
+frequency_penalty	float	—	0	频率惩罚，[-2, 2]
+presence_penalty	float	—	0	存在惩罚，[-2, 2]
+response_format	object	—	—	{"type": "json_object"} 启用 JSON 输出模式
+tools	array	—	—	可用工具列表
+tool_choice	string | object	—	"auto"	工具选择策略："none" / "auto" / "required" 或指定工具
+响应结构
+复制
+{
+  "id": "chatcmpl-xxx",
+  "object": "chat.completion",
+  "created": 1714300000,
+  "model": "glm-5.2",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hello! How can I help you today?",
+        "reasoning_content": "用户打了招呼，我应该友好地回应..."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 277,
+    "completion_tokens": 18,
+    "total_tokens": 295,
+    "prompt_tokens_details": {
+      "cached_tokens": 256,
+      "audio_tokens": 0
+    }
+  }
+}
+finish_reason 枚举
+value	含义
+stop	正常结束
+length	达到 max_tokens 或上下文上限
+tool_calls	模型选择调用工具
+content_filter	内容被合规审核拦截
+Kimi K3
+月之暗面旗舰开源原生多模态 Agent 模型，面向长程编程、知识工作及复杂推理等任务
+
+原生支持视觉理解，可结合文本与图像进行分析，并基于视觉反馈持续完成任务
+支持长程编程与工具协同，可用于大型代码库开发、复杂工程及科研复现等持续性任务
+拥有 2.8T 参数规模与 1M Token 上下文，适合大规模信息处理和长流程知识工作
+model ID: kimi-k3
+
+请求地址
+复制
+POST https://token.sensenova.cn/v1/chat/completions
+cURL 示例
+复制
+curl https://token.sensenova.cn/v1/chat/completions \
+-H "Authorization: Bearer {your_key}" \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "kimi-k3",
+    "messages": [
+      { "role": "system", "content": "你是资深全栈开发工程师，擅长复杂代码编写与问题排查" },
+      { "role": "user", "content": "用Go语言实现高并发快速排序算法，附带详细注释" }
+    ],
+    "stream": false
+}'
+推理强度（思考模式）
+Kimi-K3 默认开启深度推理，可通过顶层 reasoning_effort 调节推理深度；支持 low / high / max 三档，默认 max。复杂代码、深度分析使用 max；简单问答使用 low。
+
+复制
+curl https://token.sensenova.cn/v1/chat/completions \
+-H "Authorization: Bearer {your_key}" \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "kimi-k3",
+    "messages": [{"role": "user", "content": "分析分布式系统CAP理论的核心矛盾，结合实际业务场景给出落地取舍方案"}],
+    "reasoning_effort": "max",
+    "stream": false
+}'
+多模态视觉输入（图片）
+Kimi-K3 原生支持图片输入；不支持直接传入公网 URL 图片，请使用 base64 编码；content 必须为对象数组，不能直接传字符串。
+
+Python
+复制
+import requests
+import base64
+
+url = "https://token.sensenova.cn/v1/chat/completions"
+headers = {
+    "Authorization": "Bearer {your_key}",
+    "Content-Type: "application/json"
+}
+
+# 读取本地图片转base64
+with open("demo.png", "rb") as f:
+    img_b64 = base64.b64encode(f.read()).decode()
+
+data = {
+    "model": "kimi-k3",
+    "messages": [
+        {
+            "role": "user",
+            "content": [
+                {"type":"image_url","image_url":{"url":f"data:image/png;base64,{img_b64}"}},
+                {"type":"text","text":"详细描述这张图片内容"}
+            ]
+        }
+    ]
+}
+resp = requests.post(url, headers=headers, json=data, timeout=600)
+print(resp.json())
+工具调用
+支持标准 OpenAI 格式函数调用能力，可自定义工具、自动触发调用、并行多工具执行，适配智能体工作流、外部数据查询、任务编排场景。通过 tools 字段声明工具，模型按需返回 tool_calls，回传工具结果后可获取最终推理答复。
+
+⚠️ 多轮工具调用时：必须原样回传完整的 assistant 消息对象，不可只保留 content 字段。
+
+请求示例
+复制
+{
+    "model": "kimi-k3",
+    "messages": [{"role": "user", "content": "查询今日北京实时天气与空气质量"}],
+    "tools": [{
+        "type": "function",
+        "function": {
+            "name": "get_city_weather",
+            "description": "获取指定城市实时天气、温度、空气质量数据",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "city": {"type": "string", "description": "城市名称"}
+                },
+                "required": ["city"]
+            }
+        }
+    }],
+    "tool_choice": "auto",
+    "parallel_tool_calls": true
+}
+模型返回 tool_calls 示例
+复制
+{
+    "choices": [{
+        "index": 0,
+        "message": {
+            "role": "assistant",
+            "content": null,
+            "reasoning_content": "此处为模型内部思考推理过程……",
+            "tool_calls": [{
+                "index": 0,
+                "id": "call_zp52001",
+                "type": "function",
+                "function": {
+                    "name": "get_city_weather",
+                    "arguments": "{\"city\":\"北京\"}"
+                }
+            }]
+        },
+        "finish_reason": "tool_calls"
+    }]
+}
+工具结果回传示例
+复制
+{
+    "model": "kimi-k3",
+    "messages": [
+        {"role": "user", "content": "查询今日北京实时天气与空气质量"},
+        {"role": "assistant", "reasoning_content":"...","tool_calls": [/*上游返回完整tool_calls对象*/]},
+        {
+            "role": "tool",
+            "tool_call_id": "call_zp52001",
+            "content": "{\"temp\":26,\"weather\":\"晴\",\"aqi\":35,\"wind\":\"南风3级\"}"
+        }
+    ]
+}
+流式响应 (SSE)
+设置 stream: true 开启流式返回，响应 Content-Type 为 text/event-stream。
+
+流式增量： 思考过程字段为 delta.reasoning_content，最终回答为 delta.content；末尾以 data: [DONE] 标识请求结束。建议开启 stream_options:{"include_usage":true} 获取流式 token 统计。
+
+请求参数
+字段	类型	必填	默认值	说明
+model	string	✅	—	固定为 kimi-k3
+messages	array	✅	—	对话消息列表，role 支持 system/user/assistant/tool
+stream	boolean	—	false	是否开启 SSE 流式响应
+stream_options	object	—	{"include_usage":true}	仅 stream=true 生效；控制流式结尾是否返回 token 统计
+temperature	number	—	1.0	Kimi-K3 固定为 1.0
+top_p	number	—	0.95	核采样概率；Kimi-K3 固定配置，不建议传入覆盖
+max_completion_tokens	integer	—	131072	单次最大生成 token，上限 131072
+stop	string | array	—	—	自定义停止生成序列
+frequency_penalty	number	—	0	频率惩罚，Kimi-K3 固定配置，不建议传入
+presence_penalty	number	—	0	存在惩罚，Kimi-K3 固定配置，不建议传入
+reasoning_effort	string	—	max	推理力度，允许 low/high/max；Kimi-K3 默认开启思考
+tools	array	—	—	工具函数列表，函数调用场景使用
+tool_choice	string | object	—	auto	工具调用策略：auto/none/required
+parallel_tool_calls	boolean	—	true	是否允许并行调用多个工具
+响应结构
+复制
+{
+    "id": "chatcmpl-zp52890abc",
+    "object": "chat.completion",
+    "created": 1782456990,
+    "model": "kimi-k3",
+    "choices": [{
+        "index": 0,
+        "message": {
+            "role": "assistant",
+            "reasoning_content": "用户询问CAP理论核心矛盾，首先明确CAP三者定义，再梳理分布式系统分区容错必要性，推导无法同时满足的核心逻辑...",
+            "content": "CAP理论是分布式系统的核心理论，核心结论为：一致性（Consistency）、可用性（Availability）、分区容错性（Partition tolerance）三者无法同时满足。在分布式集群中，网络分区不可避免，因此必须在一致性和可用性之间做取舍..."
+        },
+        "finish_reason": "stop"
+    }],
+    "usage": {
+        "prompt_tokens": 156,
+        "completion_tokens": 328,
+        "total_tokens": 484,
+        "prompt_tokens_details": {"cached_tokens": 0},
+        "completion_tokens_details": {"reasoning_tokens": 189}
+    }
+}
+finish_reason 枚举说明
+value	含义
+stop	模型正常生成结束，无异常截断
+length	达到 max_completion_tokens 上限或上下文超限
+tool_calls	模型触发工具调用，等待回传工具执行结果
+content_filter	内容触发合规审核规则，被拦截终止
+自动上下文缓存说明
+Kimi-K3 自带自动前缀缓存，无需额外配置 cache-key
+
+模型列表 (List Models)
+列出当前可用的模型列表，返回每个模型的基本信息，包括能力、上下文长度、定价等。
+
+请求
+复制
+GET https://token.sensenova.cn/v1/models
+认证
+复制
+Authorization: Bearer $SENSENOVA_API_KEY
+请求示例
+复制
+curl https://token.sensenova.cn/v1/models \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY"
+响应结构
+返回一个包含 data 数组的 JSON 对象，每个元素为一个 Model 对象。
+
+复制
+{
+  "data": [
+    {
+      "id": "sensenova-6.8-flash-lite",
+      "hugging_face_id": "",
+      "name": "sensenova-6.8-flash-lite",
+      "created": 1777392000,
+      "input_modalities": ["text", "image"],
+      "output_modalities": ["text"],
+      "quantization": "fp8",
+      "context_length": 262144,
+      "max_output_length": 65536,
+      "pricing": {
+        "prompt": "0",
+        "completion": "0",
+        "image": "0",
+        "request": "0",
+        "input_cache_read": "0"
+      },
+      "supported_sampling_parameters": ["temperature", "stop"],
+      "supported_features": ["tools", "json_mode", "reasoning"],
+      "description": "SenseNova 6.8 Flash-Lite is a lightweight multimodal agent model...",
+      "openrouter": {
+        "slug": "sensenova/sensenova-6.8-flash-lite"
+      },
+      "datacenters": [{ "country_code": "CN" }]
+    }
+  ]
+}
+Model 对象字段说明
+字段	类型	说明
+id	string	模型唯一标识符，用于 API 调用时指定模型
+name	string	模型名称（通常与 id 一致）
+created	number	模型创建/发布时间（Unix 时间戳，秒）
+description	string	模型功能的文字描述
+input_modalities	array of string	支持的输入模态，可选值：text、image
+output_modalities	array of string	支持的输出模态，可选值：text、image
+context_length	number	最大上下文窗口长度（token 数）
+max_output_length	number	单次请求最大输出长度（token 数）
+quantization	string	模型量化精度（如 fp8）
+pricing	object	定价信息
+supported_sampling_parameters	array of string	模型支持的采样参数列表
+supported_features	array of string	模型支持的功能特性
+hugging_face_id	string	对应的 HuggingFace 模型 ID（如有）
+openrouter	object	OpenRouter 路由信息，含 slug 字段
+datacenters	array of object	模型部署的数据中心列表，含 country_code 字段
+Simona 兼容接口
+SenseNova 同时提供 Simona Messages API 兼容端点，适用于使用 Simona SDK 或 Simona 生态工具的场景。
+
+请求地址
+复制
+POST https://token.sensenova.cn/v1/messages
+鉴权
+与 OpenAI 兼容接口共用同一 API Key，通过 Authorization: Bearer Header 传递：
+
+复制
+Authorization: Bearer $SENSENOVA_API_KEY
+请求示例
+cURL
+Python
+Node.js
+复制
+curl https://token.sensenova.cn/v1/messages \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sensenova-6.8-flash-lite",
+    "max_tokens": 1024,
+    "system": "You are a precise assistant.",
+    "messages": [
+      { "role": "user", "content": "Hello!" }
+    ]
+  }'
+💡 使用 authToken 会以 Authorization: Bearer 方式发送密钥。若 SDK 版本不支持，可用 apiKey 参数替代。
+
+请求参数
+参数	类型	必填	默认值	说明
+model	string	✅	—	模型 ID，如 sensenova-6.8-flash-lite、deepseek-v4-flash
+messages	array	✅	—	消息列表，每条消息包含 role（system/user/assistant）和 content
+max_tokens	integer	✅	—	最大输出 Token 数，范围 [1, 65536]
+system	string / array	—	—	系统提示词，可为字符串或 [{"type":"text","text":"..."}] 数组；与 messages 内 system 二选一，冲突时以 messages 内 system 为准
+temperature	number	—	1	采样温度，sensenova-6.8-flash-lite 模型 temperature 取值范围 [0, 2]，deepseek-v4-flash 模型范围 [0, 2]
+top_p	number	—	1	核采样概率，范围 (0, 1.0]，高级用途
+stop_sequences	array	—	—	自定义停止序列，字符串数组，如 ["\n", "END"]
+stream	boolean	—	false	是否开启流式输出（SSE）
+metadata	object	—	—	请求元数据，如 {"user_id": "xxx"}，透传不影响推理
+tools	array	—	—	工具定义列表，用于函数调用
+tool_choice	object	—	{"type":"auto"}	工具选择策略：auto / any / {"type":"tool","name":"..."}
+output_config	object	—	{"effort":"high"}	输出配置。effort 子字段控制推理力度，可选值："low" / "medium" / "high"
+messages 格式说明：
+
+role 支持 system 或 user 或 assistant
+首条消息允许 role:system 或 role:user；assistant 消息不可作为第一条消息
+content 可为字符串或 content block 数组：
+复制
+[
+  { "type": "text", "text": "请描述这张图片" },
+  { "type": "image", "source": { "type": "url", "url": "https://..." } }
+]
+图片输入（仅 sensenova-6.8-flash-lite 支持）：base64 或 URL 均可，支持 image/png、image/jpeg、image/gif、image/webp 格式
+响应结构
+复制
+{
+  "id": "msg_<uuid>",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    { "type": "thinking", "thinking": "（模型内部推理过程）" },
+    { "type": "text", "text": "（最终回复文本）" }
+  ],
+  "model": "sensenova-6.8-flash-lite",
+  "stop_reason": "end_turn",
+  "usage": {
+    "input_tokens": 46,
+    "output_tokens": 216
+  }
+}
+字段	说明
+id	本次请求的唯一 ID，格式为 msg_<uuid>
+type	固定为 "message"
+role	固定为 "assistant"
+content	内容块数组，包含 thinking（推理过程）和 text（回复文本）类型
+model	实际使用的模型 ID
+stop_reason	停止原因：end_turn（自然结束）/ max_tokens（达到最大 Token）/ stop_sequence（命中停止序列）/ tool_use（请求函数调用）
+usage.input_tokens	输入消耗的 Token 数
+usage.output_tokens	输出消耗的 Token 数（含 thinking 部分）
+流式输出（SSE）
+设置 "stream": true 后，接口以 Server-Sent Events 格式返回，事件序列如下：
+
+复制
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_xxx","type":"message","role":"assistant","model":"sensenova-6.8-flash-lite","stop_reason":null,"usage":{"input_tokens":0,"output_tokens":0}}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"..."}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"..."}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"output_tokens":216}}
+
+event: message_stop
+data: {"type":"message_stop"}
+图片输入（sensenova-6.8-flash-lite）
+sensenova-6.8-flash-lite 通过 Simona Messages 接口支持图片输入，支持 Base64 和 URL 两种方式：
+
+Base64 方式：
+
+复制
+curl https://token.sensenova.cn/v1/messages \
+  -H "Authorization: Bearer $SENSENOVA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sensenova-6.8-flash-lite",
+    "max_tokens": 1024,
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "image",
+            "source": {
+              "type": "base64",
+              "media_type": "image/png",
+              "data": "<base64编码的图片数据>"
+            }
+          },
+          { "type": "text", "text": "请描述这张图片" }
+        ]
+      }
+    ]
+  }'
+URL 方式：
+
+复制
+{
+  "type": "image",
+  "source": {
+    "type": "url",
+    "url": "https://www.sensenova.cn/images/logo.png"
+  }
+}
+支持格式：image/png、image/jpeg、image/gif、image/webp。可在 content 数组中传入多张图片，也支持图文混合多轮对话。
+
+错误码
+所有错误响应遵循统一结构：
+
+复制
+{
+  "error": {
+    "type": "invalid_request_error",
+    "code": "3",
+    "message": "invalid temperature, should in [0,2]."
+  }
+}
+HTTP 状态码	错误类型 (type)	含义
+400	invalid_request_error	请求参数不合法（缺失、超范围、格式错误等）
+400	failed_precondition_error	前置条件不满足（编码失败、引擎不可用、安全检查未通过）
+403	permission_denied_error	不支持当前语言的请求
+404	not_found_error	模型 ID 不存在或已下线
+408	canceled_error	客户端取消请求
+429	quota_exceeded_error	速率/额度超限，建议指数退避重试
+500	internal_server_error	服务器内部错误

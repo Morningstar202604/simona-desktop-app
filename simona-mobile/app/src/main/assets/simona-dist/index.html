@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Simona - 西蒙娜</title>
+  <link rel="icon" href="./favicon.ico" />
+  <link rel="apple-touch-icon" href="./favicon.ico" />
+  <script type="module" crossorigin src="./assets/index-L5X7TxOM.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/react-core-CY04G_Sc.js">
+  <link rel="modulepreload" crossorigin href="./assets/icons-eGHVUFru.js">
+  <link rel="modulepreload" crossorigin href="./assets/syntax-highlight-CEtrNT2-.js">
+  <link rel="modulepreload" crossorigin href="./assets/katex-CnMu6IYE.js">
+  <link rel="modulepreload" crossorigin href="./assets/recharts-BdamYy-P.js">
+  <link rel="stylesheet" crossorigin href="./assets/katex-DceTBSF7.css">
+  <link rel="stylesheet" crossorigin href="./assets/index-ZEl2rIjc.css">
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script>
+(function() {
+  // 侧边栏辅助功能：点击外部关闭 + 右滑展开
+  function findToggleBtn() {
+    var img = document.querySelector('img[alt="Sidebar Toggle"]');
+    if (img) {
+      var btn = img.closest('button');
+      if (btn) return btn;
+    }
+    var buttons = document.querySelectorAll('button');
+    for (var i = 0; i < buttons.length; i++) {
+      if ((buttons[i].textContent || '').toLowerCase().indexOf('sidebar') !== -1) return buttons[i];
+    }
+    return null;
+  }
+
+  function isSidebarExpanded() {
+    var s = document.querySelector('.bg-simona-sidebar');
+    return s ? s.offsetWidth > 50 : false;
+  }
+
+  function toggleSidebar() {
+    var btn = findToggleBtn();
+    if (btn) btn.click();
+  }
+
+  var retries = 0, maxRetries = 50;
+  function init() {
+    if (findToggleBtn() || retries >= maxRetries) {
+      // 点击侧边栏外部 → 收起
+      document.addEventListener('click', function(e) {
+        if (!isSidebarExpanded()) return;
+        var s = document.querySelector('.bg-simona-sidebar');
+        var btn = findToggleBtn();
+        if (!s || !btn) return;
+        if (s.contains(e.target) || btn.contains(e.target)) return;
+        toggleSidebar();
+      });
+
+      // 右滑展开（从屏幕左边缘开始）
+      var touchStartX = 0, touchStartY = 0;
+      document.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      document.addEventListener('touchend', function(e) {
+        if (isSidebarExpanded()) return;
+        var dx = e.changedTouches[0].clientX - touchStartX;
+        var dy = e.changedTouches[0].clientY - touchStartY;
+        // 从屏幕左边缘开始(x<50)，右滑>60px，不太垂直
+        if (dx > 60 && Math.abs(dy) < Math.max(dx * 1.5, 100) && touchStartX < 50) {
+          toggleSidebar();
+        }
+      }, { passive: true });
+    } else {
+      retries++;
+      setTimeout(init, 300);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 500); });
+  } else {
+    setTimeout(init, 500);
+  }
+})();
+  </script>
+</body>
+
+</html>

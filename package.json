@@ -1,0 +1,344 @@
+{
+  "name": "simona-desktop",
+  "private": true,
+  "version": "1.6.14",
+  "description": "Simona Desktop - AI assistant with native capabilities",
+  "author": {
+    "name": "BeKi",
+    "email": ""
+  },
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:web": "vite build --mode web",
+    "preview": "vite preview",
+    "electron:dev": "vite build && electron .",
+    "electron:build": "vite build && electron-builder",
+    "electron:build:win": "vite build && electron-builder --win",
+    "electron:build:mac": "vite build && electron-builder --mac",
+    "electron:build:linux": "vite build && electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.simona.desktop",
+    "productName": "Simona Desktop",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "!**/node_modules/@fontsource*/**/*",
+      "!**/node_modules/react*/**/*",
+      "!**/node_modules/recharts/**/*",
+      "!**/node_modules/mermaid/**/*",
+      "!**/node_modules/katex/**/*",
+      "!**/node_modules/lucide-react/**/*",
+      "!**/node_modules/react-markdown/**/*",
+      "!**/node_modules/react-router*/**/*",
+      "!**/node_modules/react-syntax-highlighter/**/*",
+      "!**/node_modules/rehype*/**/*",
+      "!**/node_modules/remark*/**/*",
+      "!**/node_modules/hast*/**/*",
+      "!**/node_modules/mdast*/**/*",
+      "!**/node_modules/unified/**/*",
+      "!**/node_modules/vfile/**/*",
+      "!**/node_modules/micromark*/**/*",
+      "!**/node_modules/devlop/**/*",
+      "!**/node_modules/decode-named-character-reference/**/*",
+      "!**/node_modules/d3*/**/*",
+      "!**/node_modules/@types/**/*",
+      "!**/node_modules/@anthropic-ai/**/*",
+      "!**/node_modules/@grpc/**/*",
+      "!**/node_modules/@iconify/**/*",
+      "!**/node_modules/@mermaid-js/**/*",
+      "!**/node_modules/@opentelemetry/**/*",
+      "!**/node_modules/@reduxjs/**/*",
+      "!**/node_modules/@remix-run/**/*",
+      "!**/node_modules/@tuttiai/**/*",
+      "!**/node_modules/chevrotain*/**/*",
+      "!**/node_modules/cytoscape*/**/*",
+      "!**/node_modules/dagre-d3-es/**/*",
+      "!**/node_modules/highlight.js/**/*",
+      "!**/node_modules/ioredis/**/*",
+      "!**/node_modules/langium/**/*",
+      "!**/node_modules/lowlight/**/*",
+      "!**/node_modules/marked/**/*",
+      "!**/node_modules/openai/**/*",
+      "!**/node_modules/pino*/**/*",
+      "!**/node_modules/prismjs/**/*",
+      "!**/node_modules/protobufjs/**/*",
+      "!**/node_modules/refractor/**/*",
+      "!**/node_modules/zod/**/*"
+    ],
+    "extraFiles": [
+      {
+        "from": "engine",
+        "to": "resources/engine",
+        "filter": [
+          "**/*",
+          "!node_modules.rar",
+          "!node_modules/.cache/**/*",
+          "!node_modules/@types/**/*",
+          "!**/*.map",
+          "!node_modules/**/*.d.ts",
+          "!node_modules/**/*.test.ts",
+          "!node_modules/**/*.test.js",
+          "!node_modules/**/*.spec.ts",
+          "!node_modules/**/*.spec.js",
+          "!node_modules/**/*.test.tsx"
+        ]
+      },
+      {
+        "from": "engine/node_modules",
+        "to": "resources/engine/node_modules",
+        "filter": [
+          "**/*",
+          "!**/.cache/**/*",
+          "!**/@types/**/*",
+          "!**/*.map",
+          "!**/*.d.ts",
+          "!**/*.test.ts",
+          "!**/*.test.js",
+          "!**/*.spec.ts",
+          "!**/*.spec.js",
+          "!**/*.test.tsx"
+        ]
+      },
+      {
+        "from": "agent-relay.cjs",
+        "to": "agent-relay.cjs"
+      },
+      {
+        "from": "get-email.ps1",
+        "to": "get-email.ps1"
+      },
+      {
+        "from": "启动程序.bat",
+        "to": "启动程序.bat"
+      }
+    ],
+    "extraResources": [
+      {
+        "from": "git",
+        "to": "git",
+        "filter": [
+          "**/*",
+          "!mingw64/share/doc/**/*",
+          "!mingw64/share/git-gui/**/*",
+          "!mingw64/share/antiword/**/*",
+          "!mingw64/share/bash-completion/**/*",
+          "!mingw64/share/licenses/**/*",
+          "!mingw64/share/git-core/templates/**/*",
+          "!mingw64/share/zoneinfo/**/*",
+          "!mingw64/share/p11-kit/**/*",
+          "!mingw64/bin/Avalonia.Base.dll",
+          "!mingw64/bin/libSkiaSharp.dll",
+          "!mingw64/bin/libHarfBuzzSharp.dll",
+          "!mingw64/bin/tcl86.dll",
+          "!mingw64/bin/tk86.dll",
+          "!mingw64/bin/Microsoft.Identity.Client.dll",
+          "!mingw64/bin/msalruntime.dll",
+          "!mingw64/bin/msalruntime_x86.dll",
+          "!mingw64/bin/av_libglesv2.dll",
+          "!mingw64/bin/git-lfs.exe",
+          "!mingw64/bin/pdftotext.exe",
+          "!mingw64/libexec/git-core/Avalonia.Base.dll",
+          "!mingw64/libexec/git-core/libSkiaSharp.dll",
+          "!mingw64/libexec/git-core/libHarfBuzzSharp.dll",
+          "!mingw64/libexec/git-core/tcl86.dll",
+          "!mingw64/libexec/git-core/tk86.dll",
+          "!mingw64/libexec/git-core/Microsoft.Identity.Client.dll",
+          "!mingw64/libexec/git-core/msalruntime.dll",
+          "!mingw64/libexec/git-core/msalruntime_x86.dll",
+          "!mingw64/libexec/git-core/av_libglesv2.dll",
+          "!mingw64/libexec/git-core/git-daemon.exe",
+          "!mingw64/libexec/git-core/git-imap-send.exe",
+          "!mingw64/libexec/git-core/git-remote-ftp.exe",
+          "!mingw64/libexec/git-core/git-remote-ftps.exe",
+          "!mingw64/libexec/git-core/scalar.exe",
+          "!mingw64/libexec/git-core/git-sh-i18n--envsubst.exe",
+          "!usr/share/vim/**/*",
+          "!usr/share/perl5/**/*",
+          "!usr/lib/perl5/**/*",
+          "!usr/share/misc/**/*",
+          "!usr/share/terminfo/**/*",
+          "!usr/share/gnupg/**/*",
+          "!usr/share/gtk-doc/**/*",
+          "!usr/share/nano/**/*",
+          "!usr/share/mintty/**/*",
+          "!usr/share/awk/**/*",
+          "!usr/share/licenses/**/*",
+          "!usr/share/fish/**/*",
+          "!usr/share/tabset/**/*",
+          "!usr/share/makepkg-template/**/*",
+          "!usr/share/p11-kit/**/*",
+          "!usr/share/icons/**/*",
+          "!usr/share/cygwin/**/*",
+          "!usr/share/applications/**/*",
+          "!usr/bin/vim.exe",
+          "!usr/bin/rview.exe",
+          "!usr/bin/rvim.exe",
+          "!usr/bin/view.exe",
+          "!usr/bin/vimdiff.exe",
+          "!usr/bin/ex.exe",
+          "!usr/bin/mintty.exe",
+          "!usr/bin/tig.exe",
+          "!usr/bin/awk.exe",
+          "!usr/bin/gawk-5.3.2.exe",
+          "!usr/bin/gawk.exe",
+          "!usr/bin/rebase.exe",
+          "!usr/bin/cygcheck.exe",
+          "!usr/bin/gpgsm.exe",
+          "!usr/bin/gpgv.exe"
+        ]
+      },
+      {
+        "from": "simona-mem",
+        "to": "simona-mem",
+        "filter": ["**/*"]
+      },
+      {
+        "from": ".icon-ico",
+        "to": ".icon-ico"
+      },
+      {
+        "from": "python-3.13.2-embed-amd64",
+        "to": "python-3.13.2-embed-amd64",
+        "filter": [
+          "**/*",
+          "!Lib/pydoc_data/**/*",
+          "!Lib/curses/**/*",
+          "!Lib/dbm/**/*",
+          "!Lib/xmlrpc/**/*",
+          "!Lib/wsgiref/**/*",
+          "!Lib/unittest/**/*",
+          "!Lib/__phello__/**/*",
+          "!**/__pycache__/**/*"
+        ]
+      },
+      {
+        "from": "providers.json",
+        "to": "providers.json"
+      },
+      {
+        "from": "公网访问-一键启动.bat",
+        "to": "公网访问-一键启动.bat"
+      },
+      {
+        "from": "INSTALL_README.md",
+        "to": "INSTALL_README.md"
+      },
+      {
+        "from": "快速开始.md",
+        "to": "快速开始.md"
+      },
+      {
+        "from": "安装说明.txt",
+        "to": "安装说明.txt"
+      },
+      {
+        "from": "Chromium",
+        "to": "Chromium",
+        "filter": ["**/*"]
+      }
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "y1s11564",
+      "repo": "simona-desktop-app"
+    },
+    "win": {
+      "target": [
+        "dir"
+      ],
+      "icon": "public/favicon.ico",
+      "asarUnpack": [
+        "resources/engine/**/*",
+        "resources/git/**/*",
+        "resources/simona-mem/**/*"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "public/icon-mac.png",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "public/favicon.png",
+      "category": "Utility"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Simona Desktop"
+    }
+  },
+  "dependencies": {
+    "@fontsource-variable/figtree": "^5.2.10",
+    "@fontsource-variable/source-serif-4": "^5.2.9",
+    "@fontsource/noto-serif-sc": "^5.2.8",
+    "@fontsource/spectral": "^5.2.8",
+    "@remix-run/router": "1.15.3",
+    "@tuttiai/core": "^0.21.0",
+    "@tuttiai/telemetry": "^0.4.0",
+    "@tuttiai/types": "^0.11.3",
+    "adm-zip": "^0.5.16",
+    "archiver": "^7.0.1",
+    "core-util-is": "^1.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "electron-updater": "^6.8.3",
+    "express": "^5.2.1",
+    "highlight.js": "^11.11.1",
+    "inherits": "^2.0.4",
+    "isarray": "^2.0.5",
+    "katex": "^0.16.28",
+    "lucide-react": "^0.563.0",
+    "mermaid": "^11.12.2",
+    "multer": "^2.1.1",
+    "nodemailer": "^8.0.7",
+    "playwright": "^1.62.1",
+    "process-nextick-args": "^2.0.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-markdown": "9.0.1",
+    "react-router-dom": "6.22.3",
+    "react-syntax-highlighter": "^16.1.0",
+    "recharts": "^3.7.0",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "string_decoder": "^1.3.0",
+    "util-deprecate": "^1.0.2",
+    "uuid": "^13.0.0",
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
+    "@types/katex": "^0.16.8",
+    "@types/mermaid": "^9.1.0",
+    "@types/node": "^22.14.0",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.27",
+    "electron": "^41.1.0",
+    "electron-builder": "^26.8.1",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^3.4.19",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}

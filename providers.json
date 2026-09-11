@@ -1,0 +1,48 @@
+[
+  {
+    "id": "sensenova-free",
+    "name": "Sensenova (Free)",
+    "baseUrl": "https://token.sensenova.cn/v1",
+    "format": "openai",
+    "apiKey": "sk-sensenova-placeholder",
+    "isFixedMode": true,
+    "enabled": true,
+    "models": [
+      {
+        "id": "deepseek-v4-flash",
+        "name": "DeepSeek V4 Flash",
+        "enabled": true
+      },
+      {
+        "id": "deepseek-v4-pro",
+        "name": "DeepSeek V4 Pro",
+        "enabled": true
+      },
+      {
+        "id": "glm-5.2",
+        "name": "GLM-5.2",
+        "enabled": true
+      },
+      {
+        "id": "sensenova-6.8-flash-lite",
+        "name": "SenseNova 6.8 Flash Lite",
+        "enabled": true
+      },
+      {
+        "id": "kimi-k3",
+        "name": "Kimi K3",
+        "enabled": true
+      },
+      {
+        "id": "sensenova-u1.5-lite",
+        "name": "SenseNova U1.5 Lite",
+        "enabled": true
+      },
+      {
+        "id": "sensenova-u1-fast",
+        "name": "Sensenova U1 Fast",
+        "enabled": true
+      }
+    ]
+  }
+]

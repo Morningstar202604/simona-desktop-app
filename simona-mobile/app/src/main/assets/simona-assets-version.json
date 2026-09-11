@@ -1,0 +1,17 @@
+{
+  "version": "1.1.0",
+  "build": 4,
+  "min_android_sdk": 26,
+  "proot_version": "5.1.3",
+  "ubuntu_version": "24.04.4",
+  "node_version": "24.19.0",
+  "bun_version": "1.2.8",
+  "python_version": "3.13.13",
+  "notes": "同步最新前端 dist：多会话并行（per-conversation 流隔离）+ 新模型（sensenova-free: deepseek-v4-flash/glm-5.2 等）；预装 APK 构建工具链：android.jar/d8.jar/apksigner.jar 内置，首次启动自动 apt 安装 openjdk-17-jre-headless + aapt",
+  "download_urls": {
+    "rootfs": "https://mirror.nju.edu.cn/ubuntu-cdimage/ubuntu-base/releases/24.04.4/release/ubuntu-base-24.04.4-base-arm64.tar.gz",
+    "node": "https://mirrors.huaweicloud.com/nodejs/v24.19.0/node-v24.19.0-linux-arm64.tar.xz",
+    "bun": "https://github.com/oven-sh/bun/releases/download/bun-v1.2.8/bun-linux-aarch64.zip",
+    "python": "https://mirror.nju.edu.cn/github-release/astral-sh/python-build-standalone/20260408/cpython-3.13.13+20260408-aarch64-unknown-linux-gnu-install_only_stripped.tar.gz"
+  }
+}

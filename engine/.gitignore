@@ -1,0 +1,17 @@
+# Dependencies & build artifacts
+node_modules/
+dist/
+
+# Runtime configuration (injected by bridge-server / packaging scripts)
+.env
+
+# Backup / temp files
+*.rar
+*.bak
+*.tmp
+*.pre-ename
+.tscheck/
+
+# OS noise
+Thumbs.db
+.DS_Store
