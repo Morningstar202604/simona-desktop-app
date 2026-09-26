@@ -4,11 +4,10 @@
   "private": true,
   "type": "module",
   "bin": {
-    "simona-haha": "./bin/simona-haha"
+    "simona": "./src/entrypoints/cli.tsx"
   },
   "scripts": {
-    "simona-haha": "bun run ./bin/simona-haha",
-    "start": "bun run ./bin/simona-haha"
+    "start": "bun run ./src/entrypoints/cli.tsx"
   },
   "dependencies": {
     "@anthropic-ai/sandbox-runtime": "^0.0.44",
